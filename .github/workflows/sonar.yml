@@ -15,27 +15,25 @@ jobs:
       - name: Set up Flutter
         uses: subosito/flutter-action@v2
         with:
-          flutter-version: '3.35.2'  # versión que tú usas
+          flutter-version: '3.35.2'
 
       - name: Install dependencies
         run: flutter pub get
+        working-directory: docs/joyeria_christa
 
       - name: Analyze code
         run: flutter analyze
+        working-directory: docs/joyeria_christa
 
       - name: Run tests
         run: flutter test --coverage
+        working-directory: docs/joyeria_christa
 
       - name: SonarCloud Scan
+        uses: sonarsource/sonarcloud-github-action@v2.0.2
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        run: |
-          sonar-scanner \
-            -Dsonar.projectKey=Selvin-lopez_Proyecto-QA \
-            -Dsonar.organization=selvin-lopez \
-            -Dsonar.sources=lib \
-            -Dsonar.tests=test \
-            -Dsonar.test.inclusions=**/*_test.dart \
-            -Dsonar.dart.coverage.reportPaths=coverage/lcov.info \
-            -Dsonar.host.url=https://sonarcloud.io \
-            -Dsonar.login=$SONAR_TOKEN
+          SONAR_PROJECT_KEY: Selvin-lopez_Proyecto-QA
+          SONAR_ORGANIZATION: selvin-lopez
+        with:
+          projectBaseDir: docs/joyeria_christa
