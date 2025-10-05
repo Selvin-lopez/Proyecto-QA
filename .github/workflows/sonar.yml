@@ -1,4 +1,5 @@
 name: SonarCloud Scan
+
 on:
   push:
     branches: [ main ]
@@ -10,16 +11,21 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+
       - name: Set up Flutter
         uses: subosito/flutter-action@v2
         with:
-          flutter-version: '3.35.2'  # usa la versión que tienes instalada
+          flutter-version: '3.35.2'  # versión que tú usas
+
       - name: Install dependencies
         run: flutter pub get
+
       - name: Analyze code
         run: flutter analyze
+
       - name: Run tests
         run: flutter test --coverage
+
       - name: SonarCloud Scan
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
