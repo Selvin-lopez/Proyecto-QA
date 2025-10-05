@@ -1,0 +1,35 @@
+name: SonarCloud Scan
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.35.2'  # usa la versión que tienes instalada
+      - name: Install dependencies
+        run: flutter pub get
+      - name: Analyze code
+        run: flutter analyze
+      - name: Run tests
+        run: flutter test --coverage
+      - name: SonarCloud Scan
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        run: |
+          sonar-scanner \
+            -Dsonar.projectKey=Selvin-lopez_Proyecto-QA \
+            -Dsonar.organization=selvin-lopez \
+            -Dsonar.sources=lib \
+            -Dsonar.tests=test \
+            -Dsonar.test.inclusions=**/*_test.dart \
+            -Dsonar.dart.coverage.reportPaths=coverage/lcov.info \
+            -Dsonar.host.url=https://sonarcloud.io \
+            -Dsonar.login=$SONAR_TOKEN
