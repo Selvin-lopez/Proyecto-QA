@@ -12,11 +12,11 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # 1️⃣ Descarga del código fuente
+      # 1️⃣ Descargar el código fuente
       - name: Checkout del repositorio
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0
+          fetch-depth: 0  # Clona todo el historial para una mejor relevancia del análisis
 
       # 2️⃣ Instalar Flutter
       - name: Configurar Flutter
@@ -24,28 +24,30 @@ jobs:
         with:
           flutter-version: '3.35.2'
 
-      # 3️⃣ Instalar dependencias
+      # 3️⃣ Instalar dependencias del proyecto
       - name: Instalar dependencias
         run: flutter pub get
         working-directory: docs/joyeria_christa
 
-      # 4️⃣ Analizar código
+      # 4️⃣ Analizar código (sin detener por warnings)
       - name: Analizar código
         run: flutter analyze || true
         working-directory: docs/joyeria_christa
 
-      # 5️⃣ Ejecutar pruebas con cobertura
+      # 5️⃣ Ejecutar pruebas y generar cobertura
       - name: Ejecutar pruebas con cobertura
-        run: flutter test --coverage || true
+        run: |
+          flutter test --coverage
+          ls -la coverage
         working-directory: docs/joyeria_christa
 
-      # 6️⃣ Instalar Node.js (necesario para Sonar)
+      # 6️⃣ Instalar Node.js (necesario para el análisis de Sonar)
       - name: Instalar Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '18'
 
-      # 7️⃣ Ejecutar análisis SonarCloud con Node.js global
+      # 7️⃣ Ejecutar análisis SonarCloud
       - name: Escaneo SonarCloud
         uses: sonarsource/sonarcloud-github-action@v2.0.2
         env:
