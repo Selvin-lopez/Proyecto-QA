@@ -1,2 +1,54 @@
 name: Análisis SonarCloud para Flutter
-# ... (contenido completo del workflow)
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+jobs:
+  SonarCloud:
+    runs-on: ubuntu-latest
+
+    steps:
+      # 1️⃣ Descargar el código fuente
+      - name: Checkout del repositorio
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # evita clones superficiales para un análisis más preciso
+
+      # 2️⃣ Configurar Flutter
+      - name: Configurar Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.35.2'
+
+      # 3️⃣ Instalar dependencias del proyecto
+      - name: Instalar dependencias
+        run: flutter pub get
+        working-directory: docs/joyeria_christa
+
+      # 4️⃣ Analizar el código (no detiene el pipeline si hay warnings)
+      - name: Analizar código
+        run: flutter analyze || true
+        working-directory: docs/joyeria_christa
+
+      # 5️⃣ Ejecutar pruebas con cobertura
+      - name: Ejecutar pruebas con cobertura
+        run: flutter test --coverage || true
+        working-directory: docs/joyeria_christa
+
+      # 6️⃣ Instalar Node.js 20 (requerido por SonarCloud)
+      - name: Instalar Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      # 7️⃣ Ejecutar el análisis de SonarCloud
+      - name: Escaneo SonarCloud
+        uses: SonarSource/sonarcloud-github-action@v2.0.2
+        with:
+          projectBaseDir: docs/joyeria_christa
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
