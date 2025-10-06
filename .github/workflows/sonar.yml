@@ -16,7 +16,7 @@ jobs:
       - name: Checkout del repositorio
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0
+          fetch-depth: 0  # evita clones superficiales para un análisis más preciso
 
       # 2️⃣ Instalar Flutter
       - name: Configurar Flutter
@@ -29,28 +29,29 @@ jobs:
         run: flutter pub get
         working-directory: docs/joyeria_christa
 
-      # 4️⃣ Analizar el código (sin detener el pipeline por warnings)
+      # 4️⃣ Analizar código (sin detener el pipeline por warnings)
       - name: Analizar código
         run: flutter analyze || true
         working-directory: docs/joyeria_christa
 
-      # 5️⃣ Instalar Node.js (necesario para análisis JS/TS de SonarCloud)
-      - name: Instalar Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '20.x'
-
-      # 6️⃣ Ejecutar pruebas con cobertura
+      # 5️⃣ Ejecutar pruebas con cobertura
       - name: Ejecutar pruebas con cobertura
         run: flutter test --coverage || true
         working-directory: docs/joyeria_christa
 
-      # 7️⃣ Ejecutar análisis SonarCloud
+      # 6️⃣ Instalar Node.js (requerido para análisis JS/TS)
+      - name: Instalar Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+
+      # 7️⃣ Ejecutar análisis SonarCloud con Node.js correcto
       - name: Escaneo SonarCloud
         uses: sonarsource/sonarcloud-github-action@v2.0.2
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           SONAR_PROJECT_KEY: Selvin-lopez_Proyecto-QA
           SONAR_ORGANIZATION: selvin-lopez
+          SONAR_SCANNER_OPTS: "-Dsonar.nodejs.executable=/usr/local/bin/node"
         with:
           projectBaseDir: docs/joyeria_christa
