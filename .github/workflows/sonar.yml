@@ -16,7 +16,7 @@ jobs:
       - name: Checkout del repositorio
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0  # evita clones superficiales para un análisis más preciso
+          fetch-depth: 0
 
       # 2️⃣ Instalar Flutter
       - name: Configurar Flutter
@@ -34,12 +34,18 @@ jobs:
         run: flutter analyze || true
         working-directory: docs/joyeria_christa
 
-      # 5️⃣ Ejecutar pruebas con cobertura
+      # 5️⃣ Instalar Node.js (necesario para análisis JS/TS de SonarCloud)
+      - name: Instalar Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20.x'
+
+      # 6️⃣ Ejecutar pruebas con cobertura
       - name: Ejecutar pruebas con cobertura
         run: flutter test --coverage || true
         working-directory: docs/joyeria_christa
 
-      # 6️⃣ Ejecutar análisis SonarCloud
+      # 7️⃣ Ejecutar análisis SonarCloud
       - name: Escaneo SonarCloud
         uses: sonarsource/sonarcloud-github-action@v2.0.2
         env:
