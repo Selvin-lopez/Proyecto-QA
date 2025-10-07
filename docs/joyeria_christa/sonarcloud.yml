@@ -1,0 +1,41 @@
+name: CI - Flutter + SonarCloud
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+jobs:
+  test-and-analyze:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+
+      - name: Pub get
+        working-directory: docs/joyeria_christa
+        run: flutter pub get
+
+      - name: Run unit tests with coverage
+        working-directory: docs/joyeria_christa
+        run: |
+          flutter test --coverage
+          ls coverage/
+          head -n 5 coverage/lcov.info
+
+      - name: SonarCloud Scan
+        uses: SonarSource/sonarqube-scan-action@v6
+        with:
+          projectBaseDir: docs/joyeria_christa
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          SONAR_HOST_URL: https://sonarcloud.io
