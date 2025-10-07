@@ -12,25 +12,32 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      # 1️⃣ Clonar el código fuente
       - uses: actions/checkout@v4
         with:
-          fetch-depth: 0
+          fetch-depth: 0  # Necesario para un análisis preciso de historial
 
-      # Instalar Flutter SDK
+      # 2️⃣ Instalar Flutter
       - name: Set up Flutter
         uses: subosito/flutter-action@v2
         with:
-          flutter-version: "3.19.0" # o tu versión actual
+          flutter-version: "3.19.0"  # Cambia si usas otra versión
 
-      # Obtener dependencias
+      # 3️⃣ Verificar versiones de Flutter y Dart
+      - name: Verify Flutter and Dart
+        run: |
+          flutter --version
+          dart --version
+
+      # 4️⃣ Instalar dependencias
       - name: Get dependencies
         run: flutter pub get
 
-      # Ejecutar pruebas con cobertura
-      - name: Run tests
+      # 5️⃣ Ejecutar pruebas y generar reporte de cobertura
+      - name: Run tests with coverage
         run: flutter test --coverage
 
-      # Analizar con SonarCloud
+      # 6️⃣ Ejecutar análisis de SonarCloud
       - name: SonarCloud Scan
         uses: SonarSource/sonarcloud-github-action@v2
         env:
@@ -38,3 +45,9 @@ jobs:
         with:
           args: >
             -Dsonar.projectBaseDir=docs/joyeria_christa
+            -Dsonar.dart.lcov.reportPaths=coverage/lcov.info
+            -Dsonar.sources=lib
+            -Dsonar.tests=test
+            -Dsonar.exclusions=**/*.g.dart,**/*.freezed.dart,**/generated_plugin_registrant.dart,**/build/**
+            -Dsonar.javascript.enabled=false
+            -Dsonar.typescript.enabled=false
