@@ -21,7 +21,7 @@ import 'services/perfil_service.dart';
 
 // Screens - Auth y Home
 import 'screens/auth/login_screen.dart';
-import 'screens/home/home_screen.dart';
+import 'screens/Home/home_screen.dart';
 
 // Screens - Admin
 import 'screens/admin/pantalla_admin.dart';
