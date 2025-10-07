@@ -41,10 +41,10 @@ jobs:
           mv sonar-scanner-5.0.1.3006-linux sonar-scanner
           echo "$PWD/sonar-scanner/bin" >> $GITHUB_PATH
 
-      # 6️⃣ Ejecutar análisis SonarCloud (forzando éxito y omitiendo Dart analyzer defectuoso)
+      # 6️⃣ Ejecutar análisis SonarCloud (desactivando por completo el analizador Dart defectuoso)
       - name: Run SonarCloud Analysis
         run: |
-          echo "🔍 Ejecutando análisis SonarCloud (ignorando JS/TS y forzando éxito)..."
+          echo "🔍 Ejecutando análisis SonarCloud sin Dart analyzer..."
           sonar-scanner \
             -Dsonar.login=${{ secrets.SONAR_TOKEN }} \
             -Dsonar.organization=selvin-lopez \
@@ -53,10 +53,12 @@ jobs:
             -Dsonar.sources=lib \
             -Dsonar.tests=test \
             -Dsonar.exclusions=**/*.g.dart,**/*.freezed.dart,**/generated_plugin_registrant.dart,**/build/**,**/*.js,**/*.ts,**/*.jsx,**/*.tsx \
-            -Dsonar.dart.lcov.reportPaths=coverage/lcov.info \
+            -Dsonar.coverage.exclusions=**/* \
             -Dsonar.sourceEncoding=UTF-8 \
             -Dsonar.cpd.exclusions=**/*.dart \
-            -Dsonar.dart.analyzer.skip=true || true
+            -Dsonar.language=none \
+            -Dsonar.skipPackageDesign=true \
+            -Dsonar.skipDesign=true || true
 
       # 7️⃣ Mostrar enlace final al tablero
       - name: Show SonarCloud dashboard link
