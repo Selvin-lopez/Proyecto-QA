@@ -1,4 +1,4 @@
-name: SonarCloud Analysis
+name: SonarCloud Manual Analysis (Flutter)
 
 on:
   push:
@@ -7,9 +7,9 @@ on:
     types: [opened, synchronize, reopened]
 
 jobs:
-  build:
-    name: SonarCloud
+  sonar:
     runs-on: ubuntu-latest
+    name: SonarCloud Manual Scan
 
     steps:
       # 1️⃣ Clonar el repositorio
@@ -17,11 +17,11 @@ jobs:
         with:
           fetch-depth: 0
 
-      # 2️⃣ Instalar Flutter SDK
+      # 2️⃣ Instalar Flutter
       - name: Set up Flutter
         uses: subosito/flutter-action@v2
         with:
-          flutter-version: "3.19.0"  # versión actual de tu proyecto
+          flutter-version: "3.19.0"
 
       # 3️⃣ Instalar dependencias
       - name: Get dependencies
@@ -31,7 +31,7 @@ jobs:
       - name: Run tests (ignore failures)
         run: flutter test --coverage || true
 
-      # 5️⃣ Instalar Sonar Scanner CLI manualmente
+      # 5️⃣ Instalar SonarScanner CLI (no Docker)
       - name: Install Sonar Scanner
         run: |
           sudo apt-get update -y
@@ -41,10 +41,10 @@ jobs:
           mv sonar-scanner-5.0.1.3006-linux sonar-scanner
           echo "$PWD/sonar-scanner/bin" >> $GITHUB_PATH
 
-      # 6️⃣ Ejecutar análisis SonarCloud (desactivando por completo el analizador Dart defectuoso)
+      # 6️⃣ Ejecutar análisis SonarCloud manualmente (sin el contenedor oficial)
       - name: Run SonarCloud Analysis
         run: |
-          echo "🔍 Ejecutando análisis SonarCloud sin Dart analyzer..."
+          echo "🔍 Ejecutando análisis SonarCloud sin contenedor..."
           sonar-scanner \
             -Dsonar.login=${{ secrets.SONAR_TOKEN }} \
             -Dsonar.organization=selvin-lopez \
@@ -52,7 +52,7 @@ jobs:
             -Dsonar.projectBaseDir=docs/joyeria_christa \
             -Dsonar.sources=lib \
             -Dsonar.tests=test \
-            -Dsonar.exclusions=**/*.g.dart,**/*.freezed.dart,**/generated_plugin_registrant.dart,**/build/**,**/*.js,**/*.ts,**/*.jsx,**/*.tsx \
+            -Dsonar.exclusions=**/*.g.dart,**/*.freezed.dart,**/*.js,**/*.ts,**/*.jsx,**/*.tsx,**/generated_plugin_registrant.dart,**/build/** \
             -Dsonar.coverage.exclusions=**/* \
             -Dsonar.sourceEncoding=UTF-8 \
             -Dsonar.cpd.exclusions=**/*.dart \
