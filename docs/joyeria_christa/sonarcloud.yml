@@ -1,4 +1,4 @@
-name: SonarCloud Initialization
+name: SonarCloud Flutter Analysis
 
 on:
   push:
@@ -6,31 +6,43 @@ on:
   workflow_dispatch:
 
 jobs:
-  sonarcloud:
+  build:
+    name: SonarCloud
     runs-on: ubuntu-latest
-    name: SonarCloud Activation
+
+    defaults:
+      run:
+        working-directory: docs/joyeria_christa
 
     steps:
+      # 1️⃣ Clonar el repositorio
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
+      # 2️⃣ Instalar Flutter SDK
       - name: Set up Flutter
         uses: subosito/flutter-action@v2
         with:
           flutter-version: "3.35.2"
 
+      # 3️⃣ Obtener dependencias
       - name: Get dependencies
         run: flutter pub get
 
-      - name: Run lightweight analysis
-        run: |
-          echo "init" > lib/temp_sonar_init.dart
-          flutter analyze || true
-          echo "Minimal analysis executed."
+      # 4️⃣ Ejecutar análisis estático
+      - name: Run Flutter Analyze
+        run: flutter analyze || true
 
+      # 5️⃣ Ejecutar pruebas (sin detener si fallan)
+      - name: Run Flutter Tests
+        run: flutter test --coverage || true
+
+      # 6️⃣ Ejecutar escaneo SonarCloud
       - name: SonarCloud Scan
         uses: SonarSource/sonarcloud-github-action@v2.0.2
+        with:
+          projectBaseDir: docs/joyeria_christa
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
