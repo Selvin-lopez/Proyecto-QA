@@ -1,0 +1,60 @@
+name: Análisis de Calidad – SonarCloud (Flutter)
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+jobs:
+  sonarcloud:
+    runs-on: ubuntu-latest
+    steps:
+      # 1️⃣ Clona el repositorio
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      # 2️⃣ Instala Flutter
+      - name: Instalar Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: "3.35.2"
+
+      # 3️⃣ Obtiene dependencias
+      - name: Instalar dependencias
+        run: flutter pub get
+
+      # 4️⃣ Analiza y genera cobertura
+      - name: Ejecutar análisis y pruebas
+        run: |
+          flutter analyze || true
+          flutter test --coverage || true
+
+      # 5️⃣ Instala Node.js 20 (necesario para SonarCloud)
+      - name: Instalar Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      # 6️⃣ Instala SonarScanner manualmente
+      - name: Instalar SonarScanner CLI
+        run: |
+          sudo apt-get update -y
+          sudo apt-get install -y openjdk-17-jre unzip wget
+          wget https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-5.0.1.3006-linux.zip
+          unzip sonar-scanner-cli-5.0.1.3006-linux.zip
+          mv sonar-scanner-5.0.1.3006-linux sonar-scanner
+          echo "$(pwd)/sonar-scanner/bin" >> $GITHUB_PATH
+
+      # 7️⃣ Ejecuta el análisis SonarCloud
+      - name: Ejecutar análisis SonarCloud
+        run: |
+          sonar-scanner \
+            -Dsonar.projectKey=Selvin-lopez_Proyecto-QA \
+            -Dsonar.organization=selvin-lopez \
+            -Dsonar.sources=lib \
+            -Dsonar.exclusions=build/**,ios/**,android/**,web/**,.dart_tool/** \
+            -Dsonar.dart.lcov.reportPaths=coverage/lcov.info \
+            -Dsonar.host.url=https://sonarcloud.io \
+            -Dsonar.login=${{ secrets.SONAR_TOKEN }}
