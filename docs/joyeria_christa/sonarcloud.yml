@@ -26,19 +26,25 @@ jobs:
         with:
           flutter-version: "3.35.2"
 
-      # 3️⃣ Obtener dependencias
+      # 3️⃣ Instalar Node 20 para evitar errores con el plugin JS
+      - name: Set up Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      # 4️⃣ Obtener dependencias
       - name: Get dependencies
         run: flutter pub get
 
-      # 4️⃣ Ejecutar análisis estático
+      # 5️⃣ Ejecutar análisis estático
       - name: Run Flutter Analyze
         run: flutter analyze || true
 
-      # 5️⃣ Ejecutar pruebas (sin detener si fallan)
+      # 6️⃣ Ejecutar pruebas (sin detener si fallan)
       - name: Run Flutter Tests
         run: flutter test --coverage || true
 
-      # 6️⃣ Ejecutar escaneo SonarCloud
+      # 7️⃣ Ejecutar escaneo SonarCloud
       - name: SonarCloud Scan
         uses: SonarSource/sonarcloud-github-action@v2.0.2
         with:
