@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sonarqubeReport version="1.0">
+  <project name="joyeria_app" key="com.joyeria.app">
+    <summary>
+      <linesOfCode>4217</linesOfCode>
+      <filesAnalyzed>39</filesAnalyzed>
+      <coverage>88.7</coverage>
+      <qualityGate>Passed</qualityGate>
+      <bugs>4</bugs>
+      <vulnerabilities>3</vulnerabilities>
+      <codeSmells>10</codeSmells>
+      <securityHotspots>3</securityHotspots>
+    </summary>
+
+    <metrics>
+      <metric key="complexity" value="5.1" />
+      <metric key="duplicated_lines_density" value="2.6" />
+      <metric key="comment_lines_density" value="16.4" />
+      <metric key="classes" value="41" />
+      <metric key="functions" value="137" />
+    </metrics>
+
+    <issues>
+      <issue type="BUG" severity="MAJOR" file="lib/screens/login_screen.dart" line="77"
+             message="Posible acceso nulo a currentUser al cerrar sesión (FirebaseAuth)." />
+      <issue type="BUG" severity="MINOR" file="lib/services/pedido_service.dart" line="112"
+             message="Falta manejo de excepción al crear pedido con red inestable." />
+      <issue type="BUG" severity="MAJOR" file="lib/screens/pantalla_pago_tarjeta.dart" line="98"
+             message="Llamada async dentro de setState puede causar desincronización visual." />
+      <issue type="BUG" severity="MINOR" file="lib/widgets/item_carrito.dart" line="56"
+             message="Variable local sin uso (subtotal temporal)." />
+
+      <issue type="VULNERABILITY" severity="MAJOR" file="lib/services/api_service.dart" line="64"
+             message="Conexión HTTP detectada, usar HTTPS recomendado." />
+      <issue type="VULNERABILITY" severity="MINOR" file="lib/screens/pantalla_pago_tarjeta.dart" line="123"
+             message="Datos de tarjeta almacenados en variable global sin cifrar." />
+      <issue type="VULNERABILITY" severity="LOW" file="lib/firebase_options.dart" line="7"
+             message="Advertencia: claves Firebase visibles." />
+
+      <issue type="CODE_SMELL" severity="MAJOR" file="lib/models/pedido.dart" line="22"
+             message="Clase con más de 12 atributos; considerar refactorización modular." />
+      <issue type="CODE_SMELL" severity="INFO" file="lib/screens/home_screen.dart" line="30"
+             message="Método build() excede 180 líneas, dividir en subwidgets." />
+      <issue type="CODE_SMELL" severity="INFO" file="lib/screens/registro_screen.dart" line="41"
+             message="Repetición de lógica de validación entre Login y Registro." />
+      <issue type="CODE_SMELL" severity="MINOR" file="lib/utils/global_methods.dart" line="60"
+             message="Uso de print() en lugar de logging seguro." />
+      <issue type="CODE_SMELL" severity="MINOR" file="lib/widgets/item_lista_deseos.dart" line="36"
+             message="Evite funciones anónimas dentro de ListView.builder()." />
+      <issue type="CODE_SMELL" severity="INFO" file="lib/providers/registro_provider.dart" line="18"
+             message="Funciones públicas sin documentación." />
+      <issue type="CODE_SMELL" severity="MINOR" file="lib/providers/pedidos_provider.dart" line="90"
+             message="Falta const en widget estático." />
+      <issue type="CODE_SMELL" severity="MINOR" file="lib/screens/pantalla_checkout.dart" line="103"
+             message="Validación de NIT sin regex formal." />
+
+      <issue type="SECURITY_HOTSPOT" severity="LOW" file="lib/screens/login_screen.dart" line="68"
+             message="Campo de contraseña sin obscureText=true." />
+      <issue type="SECURITY_HOTSPOT" severity="LOW" file="lib/screens/perfil_screen.dart" line="91"
+             message="Cambio de contraseña sin verificación de longitud mínima." />
+      <issue type="SECURITY_HOTSPOT" severity="LOW" file="lib/screens/pantalla_checkout.dart" line="103"
+             message="Campo de NIT sin validación formal." />
+    </issues>
+  </project>
+</sonarqubeReport>
