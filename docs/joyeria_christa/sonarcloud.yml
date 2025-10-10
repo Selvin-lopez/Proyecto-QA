@@ -1,4 +1,4 @@
-name: Análisis de Calidad – SonarCloud (Flutter)
+name: SonarCloud Analysis
 
 on:
   push:
@@ -8,53 +8,64 @@ on:
 
 jobs:
   sonarcloud:
+    name: SonarCloud Analysis
     runs-on: ubuntu-latest
+
     steps:
-      # 1️⃣ Clona el repositorio
+      # 1️⃣ Clonar repositorio completo
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
-      # 2️⃣ Instala Flutter
-      - name: Instalar Flutter
-        uses: subosito/flutter-action@v2
+      # 2️⃣ Configurar entorno (auto-detecta según archivos del proyecto)
+      - name: Setup environment
+        run: |
+          if [ -f pubspec.yaml ]; then
+            echo "Flutter project detected"
+          elif [ -f package.json ]; then
+            echo "Node.js project detected"
+          elif [ -f composer.json ]; then
+            echo "PHP project detected"
+          else
+            echo "Generic project detected"
+          fi
+
+      # 3️⃣ Instalar dependencias según tipo de proyecto
+      - name: Install dependencies
+        run: |
+          if [ -f pubspec.yaml ]; then
+            sudo snap install flutter --classic
+            flutter pub get
+          elif [ -f package.json ]; then
+            npm ci
+          elif [ -f composer.json ]; then
+            composer install --no-interaction
+          fi
+
+      # 4️⃣ Ejecutar pruebas y generar cobertura
+      - name: Run tests with coverage
+        run: |
+          if [ -f pubspec.yaml ]; then
+            flutter test --coverage || true
+          elif [ -f package.json ]; then
+            npm test -- --coverage || true
+          elif [ -f phpunit.xml ]; then
+            vendor/bin/phpunit --coverage-clover tests/coverage.xml || true
+          else
+            echo "No test framework detected."
+          fi
+
+      # 5️⃣ Ejecutar análisis SonarCloud
+      - name: SonarCloud Scan
+        uses: SonarSource/sonarcloud-github-action@v2.0.2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         with:
-          flutter-version: "3.35.2"
-
-      # 3️⃣ Obtiene dependencias
-      - name: Instalar dependencias
-        run: flutter pub get
-
-      # 4️⃣ Analiza y genera cobertura
-      - name: Ejecutar análisis y pruebas
-        run: |
-          flutter analyze || true
-          flutter test --coverage || true
-
-      # 5️⃣ Instala Node.js 20 (necesario para SonarCloud)
-      - name: Instalar Node.js 20
-        uses: actions/setup-node@v4
-        with:
-          node-version: 20
-
-      # 6️⃣ Instala SonarScanner manualmente
-      - name: Instalar SonarScanner CLI
-        run: |
-          sudo apt-get update -y
-          sudo apt-get install -y openjdk-17-jre unzip wget
-          wget https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-5.0.1.3006-linux.zip
-          unzip sonar-scanner-cli-5.0.1.3006-linux.zip
-          mv sonar-scanner-5.0.1.3006-linux sonar-scanner
-          echo "$(pwd)/sonar-scanner/bin" >> $GITHUB_PATH
-
-      # 7️⃣ Ejecuta el análisis SonarCloud
-      - name: Ejecutar análisis SonarCloud
-        run: |
-          sonar-scanner \
-            -Dsonar.projectKey=Selvin-lopez_Proyecto-QA \
-            -Dsonar.organization=selvin-lopez \
-            -Dsonar.sources=lib \
-            -Dsonar.exclusions=build/**,ios/**,android/**,web/**,.dart_tool/** \
-            -Dsonar.dart.lcov.reportPaths=coverage/lcov.info \
-            -Dsonar.host.url=https://sonarcloud.io \
-            -Dsonar.login=${{ secrets.SONAR_TOKEN }}
+          args: >
+            -Dsonar.projectKey=Selvin-lopez_joyeria_christa
+            -Dsonar.organization=selvin-lopez
+            -Dsonar.sources=lib
+            -Dsonar.tests=test
+            -Dsonar.sourceEncoding=UTF-8
+            -Dsonar.dart.coverage.reportPaths=coverage/lcov.info
