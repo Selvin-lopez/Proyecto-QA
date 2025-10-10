@@ -28,18 +28,18 @@ jobs:
       - name: Install dependencies
         run: flutter pub get
 
-      # 4️⃣ Analizar el código (lint y revisión de errores)
+      # 4️⃣ Analizar código (lint y validaciones)
       - name: Analyze code
         run: flutter analyze || true
 
-      # 5️⃣ Ejecutar pruebas con cobertura
+      # 5️⃣ Ejecutar pruebas con cobertura (si existe carpeta test)
       - name: Run tests with coverage
         run: |
           if [ -d "docs/joyeria_christa/test" ]; then
             cd docs/joyeria_christa
             flutter test --coverage || true
           else
-            echo "No se encontró carpeta test/, creando carpeta y archivo de cobertura vacío."
+            echo "No se encontró carpeta test/, creando cobertura vacía"
             mkdir -p docs/joyeria_christa/coverage
             echo "TN:" > docs/joyeria_christa/coverage/lcov.info
           fi
@@ -50,7 +50,7 @@ jobs:
         with:
           node-version: 20
 
-      # 7️⃣ Ejecutar análisis en SonarCloud
+      # 7️⃣ Escanear el código en SonarCloud
       - name: SonarCloud Scan
         uses: SonarSource/sonarcloud-github-action@v2.0.2
         env:
@@ -58,7 +58,7 @@ jobs:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         with:
           projectBaseDir: docs/joyeria_christa
-          args: >
+          args: |
             -Dsonar.projectKey=Selvin-lopez_joyeria_christa
             -Dsonar.organization=selvin-lopez
             -Dsonar.projectName=Joyeria Christa Flutter App
@@ -71,12 +71,13 @@ jobs:
             -Dsonar.test.inclusions=test/**/*.dart
             -Dsonar.dart.coverage.reportPaths=coverage/lcov.info
 
-      # 8️⃣ Esperar y mostrar estado del Quality Gate (en PR o commits)
+      # 8️⃣ Validar Quality Gate
       - name: SonarCloud Quality Gate
         uses: SonarSource/sonarcloud-github-action@v2.0.2
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         with:
-          args: >
+          projectBaseDir: docs/joyeria_christa
+          args: |
             -Dsonar.qualitygate.wait=true
