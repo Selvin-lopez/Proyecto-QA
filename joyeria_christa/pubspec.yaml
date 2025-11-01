@@ -1,0 +1,49 @@
+name: joyeria_app
+description: "Aplicación móvil para venta de joyas con Firebase."
+publish_to: 'none'
+
+version: 1.0.0+1
+
+environment:
+  sdk: ^3.9.0
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  cupertino_icons: ^1.0.8
+
+  # Firebase (conjuto estable y compatible)
+  firebase_core: ^4.1.0
+  firebase_auth: ^6.0.2
+  cloud_firestore: ^6.0.1
+  firebase_storage: ^13.0.1
+
+  # Estado
+  provider: ^6.1.5
+
+  # Utilidades
+  cached_network_image: ^3.4.1
+  shared_preferences: ^2.5.3
+  flutter_iconly: ^1.0.2
+  google_sign_in: ^6.3.0   # ← Fijado, estable
+  google_fonts: ^6.2.0
+  intl: ^0.20.2
+
+  # Carrusel y multimedia
+  card_swiper: ^3.0.1
+  image_picker: ^1.2.0
+  flutter_colorpicker: ^1.1.0
+  pdf: ^3.11.3
+  printing: ^5.14.2
+  
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^6.0.0
+
+flutter:
+  uses-material-design: true
+  assets:
+    - assets/images/

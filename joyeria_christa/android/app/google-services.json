@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "714420501810",
+    "project_id": "joyeria-95fe7",
+    "storage_bucket": "joyeria-95fe7.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:714420501810:android:874dd854955fbde697eb2b",
+        "android_client_info": {
+          "package_name": "com.selvi.joyeria"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "714420501810-5de8q0ibv75h8jb1te56lo3i4j8thand.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.selvi.joyeria",
+            "certificate_hash": "ca9fd197327559e2c8d02ead9fbf1bd7af2f2127"
+          }
+        },
+        {
+          "client_id": "714420501810-bef3homq7o751lso824mrfaatd2u6hgb.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC4RpMkCn2sVfrjAvCcPm5IClnPR91QjXM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "714420501810-bef3homq7o751lso824mrfaatd2u6hgb.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -1,0 +1,7 @@
+organization=selvin-lopez
+projectKey=Selvin-lopez_Proyecto-QA
+serverUrl=https://sonarcloud.io
+serverVersion=8.0.0.68425
+dashboardUrl=https://sonarcloud.io/dashboard?id=Selvin-lopez_Proyecto-QA
+ceTaskId=AZnNYZt_KYynTcqTfJpI
+ceTaskUrl=https://sonarcloud.io/api/ce/task?id=AZnNYZt_KYynTcqTfJpI
