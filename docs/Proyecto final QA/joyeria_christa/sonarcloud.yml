@@ -1,0 +1,57 @@
+name: Manual SonarCloud Analysis (Flutter - Joyeria Christa)
+
+on:
+  workflow_dispatch:  # 🔹 Solo se ejecuta cuando tú lo inicies manualmente
+
+jobs:
+  sonarcloud:
+    name: Run SonarCloud Analysis
+    runs-on: ubuntu-latest
+
+    steps:
+      # 1️⃣ Clonar el repositorio completo
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      # 2️⃣ Configurar Flutter
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: "3.19.0"
+
+      # 3️⃣ Instalar dependencias del proyecto
+      - name: Get dependencies
+        working-directory: docs/joyeria_christa
+        run: flutter pub get
+
+      # 4️⃣ Ejecutar pruebas y generar reporte de cobertura
+      - name: Run tests with coverage
+        working-directory: docs/joyeria_christa
+        run: flutter test --coverage || true
+
+      # 5️⃣ Instalar Node.js para el Sonar Scanner
+      - name: Install Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      # 6️⃣ Ejecutar el escaneo manual a SonarCloud
+      - name: Run SonarCloud Scanner
+        working-directory: docs/joyeria_christa
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        run: |
+          npx sonar-scanner \
+            -Dsonar.projectKey=Selvin-lopez_joyeria_christa \
+            -Dsonar.organization=selvin-lopez \
+            -Dsonar.projectName="Joyeria Christa Flutter App" \
+            -Dsonar.language=dart \
+            -Dsonar.sources=lib \
+            -Dsonar.tests=test \
+            -Dsonar.dart.coverage.reportPaths=coverage/lcov.info \
+            -Dsonar.exclusions=build/**,**/*.g.dart,**/*.js,**/*.ts,**/*.yaml,**/*.json,**/generated_plugin_registrant.dart \
+            -Dsonar.host.url=https://sonarcloud.io \
+            -Dsonar.sourceEncoding=UTF-8 \
+            -Dsonar.login=${{ secrets.SONAR_TOKEN }}
